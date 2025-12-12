@@ -9,7 +9,7 @@ n_sample = length(X_all(:, 1));
 
 % Initialization network parameters.
 % The training data are split to many "batches".
-% In this lab, each batch has 50 data points
+% Each batch has 50 data points
 % Model training (the forward-backward propagation)
 % is performed on batch-by-batch.
 batch_size = 50;
@@ -18,18 +18,16 @@ W2 = 0.01*randn(256, 256); % shape [256, 256]
 W3 = 0.01*randn(256, 1); % shape [256, 1]
 
 % variables for optimization algorithm: AdamSGD
-% for this lab, you do not have to know them
-% just regard optimizer as a function (blackbox).
 m_W1 = 0; v_W1 = 0;
 m_W2 = 0; v_W2 = 0;
 m_W3 = 0; v_W3 = 0;
 step = 0;
 
-%% start training
-%prepare to visulize the results
+%% Start training
+% Prepare to visulize the results
 figure = gcf();
-%An epoch means an iteration over all 1000 training data points.
-%we let the program to finish after 550 epoches.
+%
+% Program to finish after 550 epoches.
 for epoch = 1:550 
     % permute the training dataset for each epoch
     perm = randperm(1000);
@@ -62,21 +60,14 @@ for epoch = 1:550
         %% -------------------BACKPROP-----------------------
         output_layer_gradient = 2*(output_layer-y_batch)/batch_size;  
 
-        % calculate gradients w.r.t. W3 and h2 (see defination of W3 and h2 in the figure of the handout) 
         [W3_gradient, layer2_h_gradient] = compute_gradient_for_weights_and_one_layer_below(output_layer_gradient, W3, layer2_h);
 
-        % add some code below
-        % to calculate gradients of error w.r.t. alpha_2 (see defination of alpha_2 in the figure of the handout)
         layer2_alpha_gradient = layer2_h_gradient .* activation_tanh_gradient(layer2_h);
 
-        % calculate gradients w.r.t. W2 and h1 (see defination of W3 and h2 in the figure of the handout) 
         [W2_gradient, layer1_h_gradient] = compute_gradient_for_weights_and_one_layer_below(layer2_alpha_gradient, W2, layer1_h);
 
-        % add some code below
-        % to calculate gradients of error w.r.t. alpha_1 (see defination of alpha_1 in the figure of the handout)
         layer1_alpha_gradient = layer1_h_gradient .* activation_tanh_gradient(layer1_h); 
 
-        % calculate gradients w.r.t. W1 and X (see defination of W1 in the figure of the handout) 
         [W1_gradient, ~] = compute_gradient_for_weights_and_one_layer_below(layer1_alpha_gradient, W1, X);
     
         % update error and prediction
@@ -86,9 +77,6 @@ for epoch = 1:550
         
         %% ---------------------Update-------------------------
         % Using optimizer: Adam SGD
-        % For reference see: https://arxiv.org/abs/1412.6980
-        % for this lab, you do not have to know it
-        % just regard optimizer as a function (blackbox).
         step = step + 1;
         m_W1 = (0.9 * m_W1 + 0.1 * W1_gradient);
         v_W1 = (0.999 * v_W1 + 0.001 * W1_gradient.^2);
